@@ -11,19 +11,5 @@ module.exports = function(app) {
     next();
   });
 
-  app.get("/api/test/all", controller.allAccess);
-
-  app.get("/api/test/user", [authJwt.verifyToken], controller.userBoard);
-
-  app.get(
-    "/api/test/merch",
-    [authJwt.verifyToken, authJwt.isMerchant],
-    controller.merchantBoard
-  );
-
-  app.get(
-    "/api/test/admin",
-    [authJwt.verifyToken, authJwt.isAdmin],
-    controller.adminBoard
-  );
+  app.put("/api/user/:id", [authJwt.verifyToken], controller.updateAmount); // ceklis
 };

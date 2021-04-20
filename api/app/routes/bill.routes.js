@@ -11,6 +11,10 @@ module.exports = function(app) {
     next();
   });
 
-  app.get("/api/bill/", [authJwt.verifyToken], controller.userBoard);
+  app.get("/api/bill/", [authJwt.verifyToken], controller.findAllBill); //ceklis
+  app.get("/api/bill/:bill_id", [authJwt.verifyToken], controller.findBill); //ceklis
+  app.post("/api/bill/", [authJwt.verifyToken], controller.create); //ceklis
+  app.put("/api/bill/:bill_id",[authJwt.verifyToken], controller.updatePaid); //ceklis
+  app.delete("/api/bill/:bill_id",[authJwt.verifyToken], controller.delete); //ceklis
 
 };

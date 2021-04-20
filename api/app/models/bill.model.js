@@ -4,12 +4,13 @@ const collectionName = 'bill';
 const Bill = mongoose.model(
   "Bill",
   new mongoose.Schema({
+    bill_name: String,
     bill_id: String,
-    user_id: String,
+    bill_owner: String,
+    bill_sender: String,
     amount: Number,
     description: String,
-    isPaid: Boolean,
-    contact: String
+    isPaid: Boolean
   })
   ,collectionName
 );
