@@ -34,6 +34,28 @@ exports.findBill = (req, res) => {
   });
 };
 
+// Find a single Bill with an id
+exports.findBillBasedOwner = (req, res) => {  
+  Bill.find({ bill_owner: req.params.bill_owner })
+  .then(data => {
+      if(!data) {
+          return res.status(404).send({
+              message: "Bill not found " + req.params.bill_owner
+          });            
+      }
+      res.send(data);
+  }).catch(err => {
+      if(err.kind === 'ObjectId') {
+          return res.status(404).send({
+              message: "Bill not found with id " + req.params.bill_owner
+          });                
+      }
+      return res.status(500).send({
+          message: "Error retrieving Bill with id " + req.params.bill_owner
+      });
+  });
+};
+
 // Create and Save a new Bill
 exports.create = (req, res) => {
   // Validate request
