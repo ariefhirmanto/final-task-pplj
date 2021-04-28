@@ -55,9 +55,23 @@ def Signin(url, _username, _password) :
         "password" : _password
     }
     form_json = json.dumps(form)
-    # response = requests.post(json = form_json)
+    status = False
+
+    response = requests.post(url, json = form_json)
+    if (response.status_code == 200):
+        status = True
+    elif (response.status_code == 404):
+        status = False
+    elif (response.status_code == 401) :
+        status = False
+
     print("Posting to " + url)
-    print(form_json.load())
+    return status
+
+def GetBill(bill_url, _username, token) :
+    url = bill_url + _username
+    response = requests.get(url, headers = token)
+    print("Requesting "+_username + " bill's to " + url)
 
 def FillSignin() :
     print('Sign in')
