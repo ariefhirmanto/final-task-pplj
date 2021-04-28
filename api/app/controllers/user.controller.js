@@ -1,22 +1,6 @@
 const db = require("../models");
 const User = db.user;
 
-// exports.allAccess = (req, res) => {
-//     res.status(200).send("Public Content.");
-//   };
-  
-//   exports.userBoard = (req, res) => {
-//     res.status(200).send("User Content.");
-//   };
-  
-//   exports.adminBoard = (req, res) => {
-//     res.status(200).send("Admin Content.");
-//   };
-  
-//   exports.merchantBoard = (req, res) => {
-//     res.status(200).send("Merchant Content.");
-//   };
-
 // Update a Bill by the id in the request
 exports.updateAmount = (req, res) => {
   if (!req.body) {
@@ -43,4 +27,25 @@ exports.updateAmount = (req, res) => {
         message: "Error updating User with id=" + id
       });
     });
+};
+
+exports.findOne = (req, res) => {  
+  User.find({ username: req.body.username })
+  .then(data => {
+      if(!data) {
+          return res.status(404).send({
+              message: "User not found " + req.body.username
+          });            
+      }
+      res.send(data);
+  }).catch(err => {
+      if(err.kind === 'ObjectId') {
+          return res.status(404).send({
+              message: "User not found with username " + req.body.username
+          });                
+      }
+      return res.status(500).send({
+          message: "Error retrieving node with id " + req.body.username
+      });
+  });
 };
