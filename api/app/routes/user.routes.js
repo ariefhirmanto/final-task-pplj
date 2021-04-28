@@ -11,5 +11,5 @@ module.exports = function(app) {
     next();
   });
   app.get("/api/user", [authJwt.verifyToken], controller.findOne);
-  app.put("/api/user/:id", [authJwt.verifyToken], controller.updateAmount); // ceklis
+  app.put("/api/user/:username", [authJwt.verifyToken], controller.updateAmount); // ceklis
 };

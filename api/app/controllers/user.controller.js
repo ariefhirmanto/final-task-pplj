@@ -9,14 +9,14 @@ exports.updateAmount = (req, res) => {
     });
   }
 
-  const id = req.params.id;
+  const username = req.params.username;
   const new_amount = req.body.amount_credit;
 
-  User.findOneAndUpdate(id, { amount_credit: new_amount } , { new: true, useFindAndModify: false })
+  User.findOneAndUpdate(username, { amount_credit: new_amount } , { new: true, useFindAndModify: false })
     .then(data => {
       if (!data) {
         res.status(404).send({
-          message: `Cannot update user data with id=${id}. Maybe User was not found!`
+          message: `Cannot update user data with username=${username}. Maybe User was not found!`
         });
       } else {
         res.send({ message: "Credits changed!" });
@@ -24,7 +24,7 @@ exports.updateAmount = (req, res) => {
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error updating User with id=" + id
+        message: "Error updating User with username=" + username
       });
     });
 };
