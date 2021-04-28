@@ -25,6 +25,9 @@ class App:
         ttk.Button(self.frame, text='Transfer',
                   command=self.make_page_3).pack(fill='x', expand=True, pady=10)
         self.page_3 = Page_3(master=self.root, app=self)
+        # otp
+        self.otp = otp(master=self.root, app=self)
+
 
     def main_page(self):
         self.frame.pack(padx=10, pady=10, fill='x', expand=True)
@@ -41,6 +44,10 @@ class App:
         self.frame.pack_forget()
         self.page_3.start_page()
 
+    def make_otp(self):
+        self.frame.pack_forget()
+        self.otp.start_page()
+
 class Page_1:
     # Pay Bill
     def __init__(self, master=None, app=None):
@@ -54,12 +61,12 @@ class Page_1:
         # Bill 1
         ttk.Label(self.frame, text='Bill 1 -> From: Arif, Amount: 120000, Description: Hutang').pack(fill='x', expand=True)
         # Pay Button 1
-        ttk.Button(self.frame, text='Pay').pack(fill='x', expand=True)
+        ttk.Button(self.frame, text='Pay', command=self.otp_page).pack(fill='x', expand=True)
 
         # Bill 2
         ttk.Label(self.frame, text='Bill 2 -> From: Ardi, Amount: 50000, Description: Iuaran Sampah').pack(fill='x', expand=True)
         # Pay Button 2
-        ttk.Button(self.frame, text='Pay').pack(fill='x', expand=True)
+        ttk.Button(self.frame, text='Pay', command=self.otp_page).pack(fill='x', expand=True)
 
         ttk.Button(self.frame, text='Back to Main Menu', command=self.go_back).pack(fill='x', expand=True, pady=30)
 
@@ -70,6 +77,10 @@ class Page_1:
     def go_back(self):
         self.frame.pack_forget()
         self.app.main_page()
+
+    def otp_page(self):
+        self.frame.pack_forget()
+        self.app.make_otp()
 
 class Page_2:
     # Create Bill
@@ -100,7 +111,7 @@ class Page_2:
         ttk.Entry(self.frame, textvariable=self.description).pack(fill='x', expand=True)
 
         # Create Button
-        ttk.Button(self.frame, text='Create').pack(fill='x', expand=True, pady=10)
+        ttk.Button(self.frame, text='Create', command=self.otp_page).pack(fill='x', expand=True, pady=10)
 
         # Back button
         ttk.Button(self.frame, text='Back to Main Menu', command=self.go_back).pack(fill='x', expand=True, pady=30)
@@ -111,6 +122,10 @@ class Page_2:
     def go_back(self):
         self.frame.pack_forget()
         self.app.main_page()
+    
+    def otp_page(self):
+        self.frame.pack_forget()
+        self.app.make_otp()
 
 class Page_3:
     # Transfer
@@ -127,6 +142,7 @@ class Page_3:
         self.amount = tk.StringVar()
         self.description = tk.StringVar()
 
+
         ttk.Label(self.frame, text="Recipient:").pack(fill='x', expand=True)
         ttk.Entry(self.frame, textvariable=self.transfer_recipient).pack(fill='x', expand=True)
 
@@ -137,7 +153,7 @@ class Page_3:
         ttk.Entry(self.frame, textvariable=self.description).pack(fill='x', expand=True)
 
         # Transfer Button
-        ttk.Button(self.frame, text='Transfer').pack(fill='x', expand=True, pady=10)
+        ttk.Button(self.frame, text='Transfer', command=self.otp_page).pack(fill='x', expand=True, pady=10)
 
         # Back button
         ttk.Button(self.frame, text='Back to Main Menu', command=self.go_back).pack(fill='x', expand=True, pady=30)
@@ -148,6 +164,10 @@ class Page_3:
     def go_back(self):
         self.frame.pack_forget()
         self.app.main_page()
+    
+    def otp_page(self):
+        self.frame.pack_forget()
+        self.app.make_otp()
 
 class Login:
     def __init__(self, root=None):
@@ -193,6 +213,33 @@ class Login:
                 title='Information',
                 message="Wrong Password"
             )   
+
+class otp:
+    # otp
+    def __init__(self, master=None, app=None):
+        self.master = master
+        self.app = app
+        # otp Frame
+        self.frame = ttk.Frame(self.master)
+
+        # Variabel
+        self.otp= tk.StringVar()
+
+        ttk.Label(self.frame, text="Masukkan OTP:").pack(fill='x', expand=True)
+        ttk.Entry(self.frame, textvariable=self.otp).pack(fill='x', expand=True, pady=5)
+
+        # Ok Button
+        ttk.Button(self.frame, text='Ok').pack(fill='x', expand=True, pady=10)
+
+        # Cancel
+        ttk.Button(self.frame, text='Cancel', command=self.go_back).pack(fill='x', expand=True, pady=5)
+
+    def start_page(self):
+        self.frame.pack(padx=10, pady=10, fill='x', expand=True)
+
+    def go_back(self):
+        self.frame.pack_forget()
+        self.app.main_page() 
 
 if __name__ == '__main__':
     root = tk.Tk()
