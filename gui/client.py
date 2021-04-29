@@ -69,6 +69,7 @@ def Signin(_username, _password) :
     #saving token session
     token = response.headers 
     print("Posting to " + url)
+    print(form)
     return status
 
 def CreateBill(bill_url, _bill_name, _recipient, _amount, _description):
