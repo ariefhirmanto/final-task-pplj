@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter.messagebox import showinfo
-
+from client import Signin
         
 class App:
     # menu 
@@ -198,8 +198,14 @@ class Login:
         # login button
         self.login_button = ttk.Button(self.signin, text="Login", command=self.login_clicked)
         self.login_button.pack(fill='x', expand=True, pady=10)
+        
+        # signup button
+        self.sign_up_button = ttk.Button(self.signin, text="Sign Up", command=self.sign_up_clicked)
+        self.sign_up_button.pack(fill='x', expand=True, pady=10)
+        
 
     def login_clicked(self):
+        # Signin('api/auth/signup', self.username.get(), self.password.get())
         if(self.username.get()=="pplj" and self.password.get()=="123"):
             flag = 1
         else:
@@ -213,6 +219,10 @@ class Login:
                 title='Information',
                 message="Wrong Password"
             )   
+    
+    def sign_up_clicked(self):
+        self.signin.pack_forget()
+        signup = Signup(root) 
 
 class otp:
     # otp
@@ -241,9 +251,42 @@ class otp:
         self.frame.pack_forget()
         self.app.main_page() 
 
+class Signup():
+    # sign up
+    def __init__(self, root=None):
+        self.root = root
+        # signup frame
+        self.frame = tk.Frame(self.root)
+        self.frame.pack(padx=10, pady=10, fill='x', expand=True)
+        
+        # signup
+        ttk.Label(self.frame, text='Signup').pack(fill='x', expand=True)
+
+        # Variabel
+        self.username = tk.StringVar()
+        self.email = tk.StringVar()
+        self.password = tk.StringVar()
+        self.name = tk.StringVar()
+
+        ttk.Label(self.frame, text="Name:").pack(fill='x', expand=True)
+        ttk.Entry(self.frame, textvariable=self.name).pack(fill='x', expand=True)
+
+        ttk.Label(self.frame, text="Email:").pack(fill='x', expand=True)
+        ttk.Entry(self.frame, textvariable=self.email).pack(fill='x', expand=True)
+
+        ttk.Label(self.frame, text="Username:").pack(fill='x', expand=True)
+        ttk.Entry(self.frame, textvariable=self.username).pack(fill='x', expand=True)
+
+        ttk.Label(self.frame, text="Password:").pack(fill='x', expand=True)
+        ttk.Entry(self.frame, textvariable=self.password).pack(fill='x', expand=True)
+
+        # Create Button
+        ttk.Button(self.frame, text='Create').pack(fill='x', expand=True, pady=10)
+        
+
 if __name__ == '__main__':
     root = tk.Tk()
-    root.title("Tubes PPLJ")
+    root.title("Tubes PPLJ | Payment System")
     root.geometry("500x500")
     login=Login(root)
     root.mainloop()

@@ -66,12 +66,7 @@ def Signin(url, _username, _password) :
         status = False
 
     print("Posting to " + url)
-    return status
-
-def GetBill(bill_url, _username, token) :
-    url = bill_url + _username
-    response = requests.get(url, headers = token)
-    print("Requesting "+_username + " bill's to " + url)
+    print(form)
 
 def FillSignin() :
     print('Sign in')
