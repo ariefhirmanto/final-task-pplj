@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const collectionName = 'users';
 
 const User = mongoose.model(
   "User",
@@ -18,6 +19,7 @@ const User = mongoose.model(
     bill_ID: [String],
     contact: String
   })
+  ,collectionName
 );
 
 module.exports = User;

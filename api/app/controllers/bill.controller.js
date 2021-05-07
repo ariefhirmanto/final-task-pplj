@@ -1,5 +1,6 @@
 const db = require("../models");
 const Bill = db.bill;
+const User = db.user;
 
 exports.findAllBill = (req, res) => {
   Bill.find()

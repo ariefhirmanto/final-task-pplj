@@ -12,7 +12,7 @@ exports.updateAmount = (req, res) => {
   const username = req.params.username;
   const new_amount = req.body.amount_credit;
 
-  User.findOneAndUpdate(username, { amount_credit: new_amount } , { new: true, useFindAndModify: false })
+  User.findOneAndUpdate(username, {$inc: { amount_credit: new_amount }} , { new: true, useFindAndModify: false })
     .then(data => {
       if (!data) {
         res.status(404).send({
@@ -49,3 +49,23 @@ exports.findOne = (req, res) => {
       });
   });
 };
+
+exports.updateBill = (req, res) => {
+  const username = req.body.bill_owner;
+  const new_bill = req.body.bill_id;
+  User.findOneAndUpdate({ username: username}, { $push: { bill_id: new_bill}})
+  .then(data => {
+    if (!data) {
+      res.status(404).send({
+        message: `Cannot update user with username=${username}`
+      });
+    } else {
+      res.send({ message: "User bill has been updated!" });
+    }
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: "Error updating user bill with id=" + new_bill
+    });
+  });
+}
