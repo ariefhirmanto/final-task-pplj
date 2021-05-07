@@ -9,10 +9,10 @@ exports.updateAmount = (req, res) => {
     });
   }
 
-  const username = req.params.username;
+  const username = req.body.username;
   const new_amount = req.body.amount_credit;
 
-  User.findOneAndUpdate(username, {$inc: { amount_credit: new_amount }} , { new: true, useFindAndModify: false })
+  User.findOneAndUpdate({username: username}, {$inc: { amount_credit: new_amount }} , { new: true, useFindAndModify: false })
     .then(data => {
       if (!data) {
         res.status(404).send({
