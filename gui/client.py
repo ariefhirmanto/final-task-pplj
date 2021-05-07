@@ -1,20 +1,14 @@
+# localhost = 'http://localhost:'
+# PORT = 8080
+# _signup_URL = localhost+str(PORT)+'/api/auth/signup' 
+# _signin_URL = localhost+str(PORT)+'/api/auth/signin'
+# _bill_URL = localhost+str(PORT)+'/api/bill'
+# _user_URL = localhost+str(PORT)+'/api/user'
+
 import requests
 import sys
 import json
-import variable
-if sys.argv[1:]:
-    PORT = int(sys.argv[1])
-else:
-    PORT = 8080
-
-def Main() :
-    localhost = '127.0.0.1'
-    _signup = localhost+str(PORT)+'api/auth/signup'
-    _signin = localhost+str(PORT)+'api/auth/signin'
-
-    fill_signup = FillSignUp()
-    print(fill_signup)
-
+import variable as var
 
 def FillSignUp():
     _username   = input('username: ')
@@ -41,35 +35,37 @@ def FillSignUp():
     return form_json
 
 def SignUp(form) :
-    url = _signup_URL
+    url = var._signup_URL
     # Getting Header
-    response = requests.get(url)
-    headers = response.headers
-    print(headers)
+    # response = requests.get(url)
+    # headers = response.headers
+    # print(headers)
 
     # Post form to server
     requests.post(url, json = form)
+    print(form)
 
 def Signin(_username, _password) :
     form = {
         "username" : _username,
         "password" : _password
     }
-    form_json = json.dumps(form)
     status = 0
 
-    url = _signin_URL
-    response = requests.post(url, json = form_json)
+    url = var._signin_URL
+    response = requests.post(url, json = form)
     if (response.status_code == 200):
         status = 0
     elif (response.status_code == 404): #User not found
         status = 1
     elif (response.status_code == 401) : #Wrong Password
         status = 2
-    #saving token session
-    token = response.headers 
+    #saving token session    
     print("Posting to " + url)
+    buffer = response.json()
+    token = buffer['accessToken']
     print(form)
+    print(token)
     return status
 
 def CreateBill(bill_url, _bill_name, _recipient, _amount, _description):
@@ -145,6 +141,3 @@ def FillSignin() :
     print('Sign in')
     _username   = input('username: ')
     _password   = input('password: ')
-    
-if __name__ == '__main__':
-    Main()

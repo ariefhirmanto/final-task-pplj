@@ -1,7 +1,11 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter.messagebox import showinfo
-from client import Signin
+import json
+from variable import * 
+from client import *
+# from client import Signin
+# from client import SignUp
         
 class App:
     # menu 
@@ -202,16 +206,18 @@ class Login:
         # signup button
         self.sign_up_button = ttk.Button(self.signin, text="Sign Up", command=self.sign_up_clicked)
         self.sign_up_button.pack(fill='x', expand=True, pady=10)
-        
 
     def login_clicked(self):
-        # Signin('api/auth/signup', self.username.get(), self.password.get())
-        if(self.username.get()=="pplj" and self.password.get()=="123"):
-            flag = 1
-        else:
-            flag = 0
+        
+        flag = Signin(self.username.get(), self.password.get())
 
-        if(flag):
+        #  # Signin('api/auth/signup', self.username.get(), self.password.get())
+        # if(self.username.get()=="pplj" and self.password.get()=="123"):
+        #     flag = 1
+        # else:
+        #     flag = 0
+
+        if(flag==0):
             self.signin.pack_forget()
             app = App(root)
         else:
@@ -219,7 +225,9 @@ class Login:
                 title='Information',
                 message="Wrong Password"
             )   
-    
+        print(flag)
+        # print(token)
+
     def sign_up_clicked(self):
         self.signin.pack_forget()
         signup = Signup(root) 
@@ -280,9 +288,23 @@ class Signup():
         ttk.Label(self.frame, text="Password:").pack(fill='x', expand=True)
         ttk.Entry(self.frame, textvariable=self.password).pack(fill='x', expand=True)
 
+
         # Create Button
-        ttk.Button(self.frame, text='Create').pack(fill='x', expand=True, pady=10)
+        ttk.Button(self.frame, text='Create', command = self.create_clicked).pack(fill='x', expand=True, pady=10)
+
+
+    def create_clicked(self):
+        form =  {"username" : self.username.get(),
+            "email" : self.email.get(),
+            "name" : self.name.get(),
+            "password" : self.password.get(),
+        }
+        # Serializing form
+        self.form_json = json.dumps(form)
+        SignUp(form)
+ 
         
+    
 
 if __name__ == '__main__':
     root = tk.Tk()
