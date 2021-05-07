@@ -9,6 +9,6 @@ _user_URL = localhost+str(PORT)+'/api/user'
 
 
 user_balance = 100000
-username = "ardimr"
+username = "arip"
 bill = {}
 #Perlu ditambahin

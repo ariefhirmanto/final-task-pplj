@@ -157,7 +157,7 @@ class Page_3:
         ttk.Entry(self.frame, textvariable=self.description).pack(fill='x', expand=True)
 
         # Transfer Button
-        ttk.Button(self.frame, text='Transfer', command=self.otp_page).pack(fill='x', expand=True, pady=10)
+        ttk.Button(self.frame, text='Transfer', command=self.transfer_clicked).pack(fill='x', expand=True, pady=10)
 
         # Back button
         ttk.Button(self.frame, text='Back to Main Menu', command=self.go_back).pack(fill='x', expand=True, pady=30)
@@ -172,6 +172,9 @@ class Page_3:
     def otp_page(self):
         self.frame.pack_forget()
         self.app.make_otp()
+
+    def transfer_clicked(self):
+        TransferMoney(self.transfer_recipient.get(), self.amount.get(), self.description.get(), var.token)
 
 class Login:
     def __init__(self, root=None):
