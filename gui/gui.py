@@ -4,7 +4,9 @@ from tkinter.messagebox import showinfo
 import json
 import variable as var
 from client import *
-        
+
+
+
 class App:
     # menu 
     def __init__(self, root=None):
@@ -103,6 +105,8 @@ class Page_1:
     def otp_page(self):
         self.frame.pack_forget()
         self.app.make_otp()
+    
+    
 
 class Page_2:
     # Create Bill
@@ -133,7 +137,7 @@ class Page_2:
         ttk.Entry(self.frame, textvariable=self.description).pack(fill='x', expand=True)
 
         # Create Button
-        ttk.Button(self.frame, text='Create', command=self.otp_page).pack(fill='x', expand=True, pady=10)
+        ttk.Button(self.frame, text='Create', command=self.pay_bill_clicked).pack(fill='x', expand=True, pady=10)
 
         # Back button
         ttk.Button(self.frame, text='Back to Main Menu', command=self.go_back).pack(fill='x', expand=True, pady=30)
@@ -149,6 +153,12 @@ class Page_2:
         self.frame.pack_forget()
         self.app.make_otp()
 
+    def pay_bill_clicked(self):
+        CreateBill(self.bill_name.get(), self.bill_recipient.get(), self.amount.get(), self.description.get())
+        ttk.Entry(self.frame, textvariable=self.bill_name).delete(0,'end')
+        ttk.Entry(self.frame, textvariable=self.bill_recipient).delete(0,'end')
+        ttk.Entry(self.frame, textvariable=self.amount).delete(0,'end')
+        ttk.Entry(self.frame, textvariable=self.description).delete(0,'end')
 class Page_3:
     # Transfer
     def __init__(self, master=None, app=None):
@@ -211,8 +221,10 @@ class Login:
         self.signin = ttk.Frame(root)
         self.signin.pack(padx=10, pady=10, fill='x', expand=True)
         
-        ttk.Label(self.signin, text="MATA DUITAN PAYMENT SYSTEM", font=("Arial", 20)).pack(fill='x', expand=True, pady=20)
+        image1 = tk.PhotoImage(file='crab.png')
+        # ttk.Label(self.signin, image=image1 ).pack(fill='x', expand=True, pady=20)
 
+        ttk.Label(self.signin, text="MATA DUITAN PAYMENT SYSTEM", font=("Arial", 20)).pack(fill='x', expand=True, pady=20)
 
         # username
         self.username_label = ttk.Label(self.signin, text="Username :")

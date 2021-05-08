@@ -4,6 +4,7 @@ import requests
 import sys
 import json
 import variable as var
+from random import randint
 
 def FillSignUp():
     _username   = input('username: ')
@@ -58,23 +59,29 @@ def Signin(_username, _password) :
         var.username = buffer['username']
         var.name = buffer['name']
         var.amount_credit = buffer['amount_credit']
-        # print(form)
+        print(var.token )
         # print(var.username)
         # print(buffer)
     return status
 
-def CreateBill(bill_url, _bill_name, _recipient, _amount, _description):
+def CreateBill(_bill_name, _recipient, _amount, _description):
+    bill_id = str(randint(0,1000))
     form = {
         "bill_name" : _bill_name,
-        "bill_sender" : username,
+        "bill_id": bill_id,
+        "bill_sender" : var.username,
         "bill_owner" : _recipient,
         "amount" : _amount,
         "description" : _description 
     }
-    
+    form_2 = {
+        "bill_id": bill_id,
+        "bill_owner" : _recipient,
+    }
     #Post to server
-    response = requests.post(bill_url,json=form, headers = {'X-Access-Token': var.token})
-    print('Creating bill to ' + bill_url)
+    response = requests.post(var._bill_URL, json=form, headers = {'X-Access-Token': var.token})
+    print('Creating bill to ' + var._bill_URL)
+    response = requests.put(var._user_URL+'/bill', json=form_2, headers = {'X-Access-Token': var.token})
 
 def GetBill(_username, _bill_id) :
     if(_bill_id == ''):
