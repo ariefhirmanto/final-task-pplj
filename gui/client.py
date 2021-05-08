@@ -68,7 +68,12 @@ def CreateBill(_bill_name, _recipient, _amount, _description):
     bill_id = str(randint(0,1000))
     #finding recipient
      # Find recipient in database
+<<<<<<< Updated upstream
     if(CheckRecipient(_recipient) == 1):
+=======
+    response = requests.get(var._user_URL, json = {'username':_recipient}, headers = {'X-Access-Token': var.token})
+    if(response.status_code == 404):
+>>>>>>> Stashed changes
         #User not found
         return 1
     
@@ -91,17 +96,16 @@ def CreateBill(_bill_name, _recipient, _amount, _description):
 
 def GetBill(_username, _bill_id) :
     if(_bill_id == ''):
-        url = _bill_URL + '/' + _username
+        url = var._bill_URL + '/' + _username
     else :
-        url = _bill_URL +'/'+ _username +'/'+_bill_id
+        url = var._bill_URL +'/'+_bill_id
     
     response = requests.get(url, headers = {'X-Access-Token': var.token})
     
-    #Return response as Json data
-    bill_json = response.json().load()
-    #Parsing bill_json and save it (not yet implemented)
-    print("Requesting "+_username + " bill's to " + url)
-
+    var.bill_form = response.json()
+    print(var.bill_form)
+  
+        
 def UpdateBill(_bill_id) :
     url = _bill_URL +'/'+ _bill_id
     response = requests.put(url, headers = {'X-Access-Token': var.token})

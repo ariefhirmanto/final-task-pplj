@@ -4,6 +4,7 @@ from tkinter.messagebox import showinfo
 import json
 import variable as var
 from client import *
+from PIL import Image, ImageTk
 
 
 
@@ -41,7 +42,9 @@ class App:
                   command=self.logout).pack(fill='x', expand=True, pady=30)
 
         # otp
-        self.otp = otp(master=self.root, app=self)
+        self.otp1 = otp(master=self.root, app=self)
+        self.otp2 = otp(master=self.root, app=self)
+        self.otp3 = otp(master=self.root, app=self)
 
 
     def main_page(self):
@@ -50,6 +53,7 @@ class App:
     def make_page_1(self):
         self.frame.pack_forget()
         self.page_1.start_page()
+        GetBill(var.username,'')
 
     def make_page_2(self):
         self.frame.pack_forget()
@@ -59,9 +63,17 @@ class App:
         self.frame.pack_forget()
         self.page_3.start_page()
 
-    def make_otp(self):
+    def make_otp1(self):
         self.frame.pack_forget()
-        self.otp.start_page()
+        self.otp1.start_page()
+    
+    def make_otp2(self):
+        self.frame.pack_forget()
+        self.otp2.start_page()
+    
+    def make_otp3(self):
+        self.frame.pack_forget()
+        self.otp3.start_page()
 
     def logout(self):
         self.frame.pack_forget()
@@ -78,10 +90,26 @@ class Page_1:
         # Pay Bill
         ttk.Label(self.frame, text='Bill List', font=("Arial", 20)).pack(fill='x', expand=True)
 
-        # Bill 1
-        ttk.Label(self.frame, text='Bill 1 -> From: Arif, Amount: 120000, Description: Hutang').pack(fill='x', expand=True)
-        # Bill 2
-        ttk.Label(self.frame, text='Bill 2 -> From: Ardi, Amount: 50000, Description: Iuaran Sampah').pack(fill='x', expand=True)
+        # # Bill 1
+        # ttk.Label(self.frame, text='Bill 1 -> From: Arif, Amount: 120000, Description: Hutang').pack(fill='x', expand=True)
+        # # Bill 2
+        # ttk.Label(self.frame, text='Bill 2 -> From: Ardi, Amount: 50000, Description: Iuaran Sampah').pack(fill='x', expand=True)
+
+        for i in range(0, len(var.bill_form)):
+            var.bill_name = var.bill_form[i]['bill_name']
+            var.bill_id = var.bill_form[i]['bill_id']
+            var.bill_sender = var.bill_form[i]['bill_sender']
+            var.bill_amount = var.bill_form[i]['amount']
+            var.bill_description = var.bill_form[i]['description']
+            print(var.bill_name)
+            print(var.bill_id)
+            print(var.bill_sender)
+            print(var.bill_amount)
+            print(var.bill_description)
+
+            ttk.Label(self.frame, text='Bill: ' + var.bill_name + ' ID: '+var.bill_id + ' Sender: ' + var.bill_sender+' Amount: '+ \
+                var.bill_amount + ' Description: ' + var.bill_description, font=("Arial", 20)).pack(fill='x', expand=True)
+
         ttk.Label(self.frame, text='---------------------------------------------------').pack(fill='x', expand=True)
 
         self.bill_id = tk.StringVar()
@@ -94,6 +122,7 @@ class Page_1:
 
         ttk.Button(self.frame, text='Back to Main Menu', command=self.go_back).pack(fill='x', expand=True, pady=30)
 
+        
 
     def start_page(self):
         self.frame.pack(padx=10, pady=10, fill='x', expand=True)
@@ -104,10 +133,7 @@ class Page_1:
 
     def otp_page(self):
         self.frame.pack_forget()
-        self.app.make_otp()
-    
-    
-
+        self.app.make_otp1()
 class Page_2:
     # Create Bill
     def __init__(self, master=None, app=None):
@@ -137,7 +163,7 @@ class Page_2:
         ttk.Entry(self.frame, textvariable=self.description).pack(fill='x', expand=True)
 
         # Create Button
-        ttk.Button(self.frame, text='Create', command=self.pay_bill_clicked).pack(fill='x', expand=True, pady=10)
+        ttk.Button(self.frame, text='Create', command=self.create_bill_clicked).pack(fill='x', expand=True, pady=10)
 
         # Back button
         ttk.Button(self.frame, text='Back to Main Menu', command=self.go_back).pack(fill='x', expand=True, pady=30)
@@ -151,10 +177,16 @@ class Page_2:
     
     def otp_page(self):
         self.frame.pack_forget()
-        self.app.make_otp()
+        self.app.make_otp2()
 
-    def pay_bill_clicked(self):
-        CreateBill(self.bill_name.get(), self.bill_recipient.get(), self.amount.get(), self.description.get())
+    def create_bill_clicked(self):
+        flag = CreateBill(self.bill_name.get(), self.bill_recipient.get(), self.amount.get(), self.description.get())
+        if(flag==1):
+            showinfo(
+                title='Information',
+                message="Transaction Failed, User not Found"
+            )
+
         ttk.Entry(self.frame, textvariable=self.bill_name).delete(0,'end')
         ttk.Entry(self.frame, textvariable=self.bill_recipient).delete(0,'end')
         ttk.Entry(self.frame, textvariable=self.amount).delete(0,'end')
@@ -202,10 +234,15 @@ class Page_3:
     
     def otp_page(self):
         self.frame.pack_forget()
-        self.app.make_otp()
+        self.app.make_otp3()
 
     def transfer_clicked(self):
-        TransferMoney(self.transfer_recipient.get(), self.amount.get(), self.description.get(), var.token)
+        flag = TransferMoney(self.transfer_recipient.get(), self.amount.get(), self.description.get(), var.token)
+        if(flag==1):
+            showinfo(
+                title='Information',
+                message="Transaction Failed, User not Found"
+            )
         # Clear Entry
         ttk.Entry(self.frame, textvariable=self.transfer_recipient).delete(0, 'end')
         ttk.Entry(self.frame, textvariable=self.amount).delete(0, 'end')
@@ -221,10 +258,15 @@ class Login:
         self.signin = ttk.Frame(root)
         self.signin.pack(padx=10, pady=10, fill='x', expand=True)
         
-        image1 = tk.PhotoImage(file='crab.png')
-        # ttk.Label(self.signin, image=image1 ).pack(fill='x', expand=True, pady=20)
+        # image crab
+        crab = Image.open("crab.png")
+        crab_image = ImageTk.PhotoImage(crab)
+        self.im = ttk.Label(self.signin, image=crab_image)
+        self.im.image = crab_image
+        self.im.pack(ipadx=10, ipady=10)
 
-        ttk.Label(self.signin, text="MATA DUITAN PAYMENT SYSTEM", font=("Arial", 20)).pack(fill='x', expand=True, pady=20)
+        # Title
+        ttk.Label(self.signin, text="\"MATA DUITAN\" PAYMENT SYSTEM", font=("Arial", 20)).pack(fill='x', expand=True, pady=20)
 
         # username
         self.username_label = ttk.Label(self.signin, text="Username :")

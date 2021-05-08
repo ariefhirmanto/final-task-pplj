@@ -14,4 +14,11 @@ token = " "
 username = " "
 name = " "
 amount_credit = " "
-bill = {}
+bill = []
+bill_form = []
+
+bill_name = " "
+bill_id = " "
+bill_serder = " "
+bill_amount = 0
+bill_description = " "
