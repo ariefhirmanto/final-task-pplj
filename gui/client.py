@@ -71,20 +71,18 @@ def CreateBill(bill_url, _bill_name, _recipient, _amount, _description):
         "amount" : _amount,
         "description" : _description 
     }
-    #Create JSON Object
-    form_json = json.dumps(form)
-
+    
     #Post to server
-    response = requests.post(bill_url,json=form_json, headers = token)
+    response = requests.post(bill_url,json=form, headers = {'X-Access-Token': var.token})
     print('Creating bill to ' + bill_url)
 
-def GetBill(_username, _bill_id, token) :
+def GetBill(_username, _bill_id) :
     if(_bill_id == ''):
         url = _bill_URL + '/' + _username
     else :
         url = _bill_URL +'/'+ _username +'/'+_bill_id
     
-    response = requests.get(url, headers = token)
+    response = requests.get(url, headers = {'X-Access-Token': var.token})
     
     #Return response as Json data
     bill_json = response.json().load()
@@ -93,11 +91,11 @@ def GetBill(_username, _bill_id, token) :
 
 def UpdateBill(_bill_id) :
     url = _bill_URL +'/'+ _bill_id
-    response = requests.put(url, headers = var.token)
+    response = requests.put(url, headers = {'X-Access-Token': var.token})
 
 def DeleteBill(_bill_id):
     url = _bill_URL +'/'+ _bill_id
-    response = requests.delete(url, headers = token)
+    response = requests.delete(url, headers = {'X-Access-Token': var.token})
 
 def GetCredit (credit_url, _username, token) :
     #Get Credit from server
