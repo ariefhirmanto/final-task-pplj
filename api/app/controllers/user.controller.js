@@ -32,7 +32,8 @@ exports.updateAmount = (req, res) => {
 exports.findOne = (req, res) => {  
   User.find({ username: req.body.username })
   .then(data => {
-      if(!data) {
+      console.log(data);
+      if(!data || data == "") {
           return res.status(404).send({
               message: "User not found " + req.body.username
           });            
@@ -45,7 +46,7 @@ exports.findOne = (req, res) => {
           });                
       }
       return res.status(500).send({
-          message: "Error retrieving node with id " + req.body.username
+          message: "Error retrieving username with id " + req.body.username
       });
   });
 };
@@ -53,9 +54,9 @@ exports.findOne = (req, res) => {
 exports.updateBill = (req, res) => {
   const username = req.body.bill_owner;
   const new_bill = req.body.bill_id;
-  User.findOneAndUpdate({ username: username}, { $push: { bill_id: new_bill}})
+  User.findOneAndUpdate({ username: username}, { $push: { bill_id: new_bill}}, {new: true, upsert: true, useFindAndModify: false })
   .then(data => {
-    if (!data) {
+    if (!data || data == "") {
       res.status(404).send({
         message: `Cannot update user with username=${username}`
       });

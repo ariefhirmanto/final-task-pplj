@@ -16,7 +16,7 @@ const User = mongoose.model(
       }
     ],
     amount_credit: Number,
-    bill_ID: [String],
+    bill_id: [String],
     contact: String
   })
   ,collectionName
