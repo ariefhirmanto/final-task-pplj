@@ -32,7 +32,6 @@ exports.updateAmount = (req, res) => {
 exports.findOne = (req, res) => {  
   User.find({ username: req.body.username })
   .then(data => {
-      console.log(data);
       if(!data || data == "") {
           return res.status(404).send({
               message: "User not found " + req.body.username

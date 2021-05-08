@@ -1,13 +1,1 @@
-global.OTPServer = 0
-function generateOTP() {
-          
-    // Declare a digits variable 
-    // which stores all digits
-    var digits = '0123456789';
-    let OTP = '';
-    for (let i = 0; i < 4; i++ ) {
-        OTP += digits[Math.floor(Math.random() * 10)];
-    }
-    console.log(OTP);
-    return OTP;
-}
+global.OTPServer = 0;
