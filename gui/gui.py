@@ -2,10 +2,8 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter.messagebox import showinfo
 import json
-from variable import * 
+import variable as var
 from client import *
-# from client import Signin
-# from client import SignUp
         
 class App:
     # menu 
@@ -14,7 +12,13 @@ class App:
         # menu frame
         self.frame = tk.Frame(self.root)
         self.frame.pack(padx=10, pady=10, fill='x', expand=True)
-        
+
+        ttk.Label(self.frame, text='-----------------------------------').pack(fill='x', expand=True)
+        ttk.Label(self.frame, text='Username \t'+var.username).pack(fill='x', expand=True)
+        ttk.Label(self.frame, text='Name \t\t'+var.name).pack(fill='x', expand=True)
+        ttk.Label(self.frame, text='Money \t\t'+str(var.amount_credit)).pack(fill='x', expand=True)
+        ttk.Label(self.frame, text='-----------------------------------').pack(fill='x', expand=True)
+
         # menu
         ttk.Label(self.frame, text='Menu').pack(fill='x', expand=True)
         # Pay Bill button
@@ -29,6 +33,11 @@ class App:
         ttk.Button(self.frame, text='Transfer',
                   command=self.make_page_3).pack(fill='x', expand=True, pady=10)
         self.page_3 = Page_3(master=self.root, app=self)
+
+        # Logout button
+        ttk.Button(self.frame, text='Logout',
+                  command=self.logout).pack(fill='x', expand=True, pady=30)
+
         # otp
         self.otp = otp(master=self.root, app=self)
 
@@ -52,6 +61,11 @@ class App:
         self.frame.pack_forget()
         self.otp.start_page()
 
+    def logout(self):
+        self.frame.pack_forget()
+        login=Login(root)
+
+
 class Page_1:
     # Pay Bill
     def __init__(self, master=None, app=None):
@@ -60,16 +74,20 @@ class Page_1:
         # Pay Bill frame
         self.frame = ttk.Frame(self.master)
         # Pay Bill
-        ttk.Label(self.frame, text='Bill List').pack(fill='x', expand=True)
+        ttk.Label(self.frame, text='Bill List', font=("Arial", 20)).pack(fill='x', expand=True)
 
         # Bill 1
         ttk.Label(self.frame, text='Bill 1 -> From: Arif, Amount: 120000, Description: Hutang').pack(fill='x', expand=True)
-        # Pay Button 1
-        ttk.Button(self.frame, text='Pay', command=self.otp_page).pack(fill='x', expand=True)
-
         # Bill 2
         ttk.Label(self.frame, text='Bill 2 -> From: Ardi, Amount: 50000, Description: Iuaran Sampah').pack(fill='x', expand=True)
-        # Pay Button 2
+        ttk.Label(self.frame, text='---------------------------------------------------').pack(fill='x', expand=True)
+
+        self.bill_id = tk.StringVar()
+
+        # Bill Id
+        ttk.Label(self.frame, text="Bill ID:").pack(fill='x', expand=True)
+        ttk.Entry(self.frame, textvariable=self.bill_id).pack(fill='x', expand=True)
+        # Pay Button
         ttk.Button(self.frame, text='Pay', command=self.otp_page).pack(fill='x', expand=True)
 
         ttk.Button(self.frame, text='Back to Main Menu', command=self.go_back).pack(fill='x', expand=True, pady=30)
@@ -94,7 +112,7 @@ class Page_2:
         # Create Bill Frame
         self.frame = ttk.Frame(self.master)
         # Create Bill
-        ttk.Label(self.frame, text='Create Bill').pack(fill='x', expand=True)
+        ttk.Label(self.frame, text='Create Bill', font=("Arial", 20)).pack(fill='x', expand=True)
 
         # Variabel
         self.bill_name = tk.StringVar()
@@ -139,7 +157,7 @@ class Page_3:
         # Transfer Frame
         self.frame = ttk.Frame(self.master)
         # Transfer
-        ttk.Label(self.frame, text='Transfer').pack(fill='x', expand=True)
+        ttk.Label(self.frame, text='Transfer', font=("Arial", 20)).pack(fill='x', expand=True)
 
         # Variabel
         self.transfer_recipient= tk.StringVar()
@@ -157,7 +175,7 @@ class Page_3:
         ttk.Entry(self.frame, textvariable=self.description).pack(fill='x', expand=True)
 
         # Transfer Button
-        ttk.Button(self.frame, text='Transfer', command=self.otp_page).pack(fill='x', expand=True, pady=10)
+        ttk.Button(self.frame, text='Transfer', command=self.transfer_clicked).pack(fill='x', expand=True, pady=10)
 
         # Back button
         ttk.Button(self.frame, text='Back to Main Menu', command=self.go_back).pack(fill='x', expand=True, pady=30)
@@ -166,6 +184,9 @@ class Page_3:
         self.frame.pack(padx=10, pady=10, fill='x', expand=True)
 
     def go_back(self):
+        ttk.Entry(self.frame, textvariable=self.transfer_recipient).delete(0, 'end')
+        ttk.Entry(self.frame, textvariable=self.amount).delete(0, 'end')
+        ttk.Entry(self.frame, textvariable=self.description).delete(0, 'end')
         self.frame.pack_forget()
         self.app.main_page()
     
@@ -173,6 +194,12 @@ class Page_3:
         self.frame.pack_forget()
         self.app.make_otp()
 
+    def transfer_clicked(self):
+        TransferMoney(self.transfer_recipient.get(), self.amount.get(), self.description.get(), var.token)
+        # Clear Entry
+        ttk.Entry(self.frame, textvariable=self.transfer_recipient).delete(0, 'end')
+        ttk.Entry(self.frame, textvariable=self.amount).delete(0, 'end')
+        ttk.Entry(self.frame, textvariable=self.description).delete(0, 'end')
 class Login:
     def __init__(self, root=None):
         self.root = root
@@ -183,6 +210,9 @@ class Login:
         # Sign in frame
         self.signin = ttk.Frame(root)
         self.signin.pack(padx=10, pady=10, fill='x', expand=True)
+        
+        ttk.Label(self.signin, text="MATA DUITAN PAYMENT SYSTEM", font=("Arial", 20)).pack(fill='x', expand=True, pady=20)
+
 
         # username
         self.username_label = ttk.Label(self.signin, text="Username :")
@@ -211,22 +241,20 @@ class Login:
         
         flag = Signin(self.username.get(), self.password.get())
 
-        #  # Signin('api/auth/signup', self.username.get(), self.password.get())
-        # if(self.username.get()=="pplj" and self.password.get()=="123"):
-        #     flag = 1
-        # else:
-        #     flag = 0
-
         if(flag==0):
             self.signin.pack_forget()
             app = App(root)
-        else:
+        elif(flag==1):
+            showinfo(
+                title='Information',
+                message="User not Found"
+            )
+        elif(flag==2):
             showinfo(
                 title='Information',
                 message="Wrong Password"
             )   
-        print(flag)
-        # print(token)
+        # print(flag)
 
     def sign_up_clicked(self):
         self.signin.pack_forget()
@@ -268,12 +296,13 @@ class Signup():
         self.frame.pack(padx=10, pady=10, fill='x', expand=True)
         
         # signup
-        ttk.Label(self.frame, text='Signup').pack(fill='x', expand=True)
+        ttk.Label(self.frame, text='Sign Up', font=("Arial", 20)).pack(fill='x', expand=True)
 
         # Variabel
         self.username = tk.StringVar()
         self.email = tk.StringVar()
         self.password = tk.StringVar()
+        self.repeat_password = tk.StringVar()
         self.name = tk.StringVar()
 
         ttk.Label(self.frame, text="Name:").pack(fill='x', expand=True)
@@ -286,23 +315,42 @@ class Signup():
         ttk.Entry(self.frame, textvariable=self.username).pack(fill='x', expand=True)
 
         ttk.Label(self.frame, text="Password:").pack(fill='x', expand=True)
-        ttk.Entry(self.frame, textvariable=self.password).pack(fill='x', expand=True)
+        ttk.Entry(self.frame, textvariable=self.password, show="*").pack(fill='x', expand=True)
 
+        ttk.Label(self.frame, text="Repeat Password:").pack(fill='x', expand=True)
+        ttk.Entry(self.frame, textvariable=self.repeat_password, show="*").pack(fill='x', expand=True)
 
         # Create Button
         ttk.Button(self.frame, text='Create', command = self.create_clicked).pack(fill='x', expand=True, pady=10)
 
+        # Back to Login Menu
+        ttk.Button(self.frame, text='Back to Login Menu', command = self.back_login_clicked).pack(fill='x', expand=True, pady=10)
+
 
     def create_clicked(self):
-        form =  {"username" : self.username.get(),
-            "email" : self.email.get(),
-            "name" : self.name.get(),
-            "password" : self.password.get(),
-        }
-        # Serializing form
-        self.form_json = json.dumps(form)
-        SignUp(form)
- 
+        if(self.password.get()==self.repeat_password.get()):
+            form =  {"username" : self.username.get(),
+                "email" : self.email.get(),
+                "name" : self.name.get(),
+                "password" : self.password.get(),
+            }
+            # Serializing form
+            self.form_json = json.dumps(form)
+            SignUp(form)
+            ttk.Entry(self.frame, textvariable=self.name).delete(0, 'end')
+            ttk.Entry(self.frame, textvariable=self.email).delete(0, 'end')
+            tk.Entry(self.frame, textvariable=self.username).delete(0, 'end')
+            ttk.Entry(self.frame, textvariable=self.password, show="*").delete(0, 'end')
+            ttk.Entry(self.frame, textvariable=self.repeat_password, show="*").delete(0, 'end')
+        else:
+            showinfo(
+                title='Information',
+                message="Password are not matched"
+            )   
+
+    def back_login_clicked(self):
+        self.frame.pack_forget()
+        login=Login(root)
         
     
 
