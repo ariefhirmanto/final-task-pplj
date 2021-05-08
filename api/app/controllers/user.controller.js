@@ -53,7 +53,7 @@ exports.findOne = (req, res) => {
 exports.updateBill = (req, res) => {
   const username = req.body.bill_owner;
   const new_bill = req.body.bill_id;
-  User.findOneAndUpdate({ username: username}, { $push: { bill_id: new_bill}})
+  User.findOneAndUpdate({ username: username}, { $push: { bill_id: new_bill}}, {new: true, upsert: true, useFindAndModify: false })
   .then(data => {
     if (!data) {
       res.status(404).send({
