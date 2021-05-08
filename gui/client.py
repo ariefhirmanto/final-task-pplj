@@ -68,10 +68,8 @@ def CreateBill(_bill_name, _recipient, _amount, _description):
     bill_id = str(randint(0,1000))
     #finding recipient
      # Find recipient in database
-    response = requests.get(var._user_URL, json = {'username':_recipient}, headers = {'X-Access-Token': token})
-    if(response.status_code == 404):
+    if(CheckRecipient(_recipient) == 1):
         #User not found
-        print(_recipient+ ' Not Found')
         return 1
     
     form = {
@@ -127,14 +125,22 @@ def ChangeCredit(credit_url, _username,_amount_, token):
 
     print(response.json())
 
-def TransferMoney(_recipient, _amount_, _description,token):
-    credit_url = var._user_URL + '/transfer'
-    
+def CheckRecipient(_recipient):
+    #Check if recipient does exist
     # Find recipient in database
     response = requests.get(var._user_URL, json = {'username':_recipient}, headers = {'X-Access-Token': token})
     if(response.status_code == 404):
         #User not found
         print(_recipient+ ' Not Found')
+        return 1
+    else :
+        return 0
+
+def TransferMoney(_recipient, _amount_, _description,token):
+    credit_url = var._user_URL + '/transfer'
+
+    if(CheckRecipient(_recipient) == 1):
+        #User not found
         return 1
     else :
         #Change Recipient Credit
