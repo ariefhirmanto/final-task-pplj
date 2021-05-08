@@ -66,13 +66,21 @@ def Signin(_username, _password) :
 
 def CreateBill(_bill_name, _recipient, _amount, _description):
     bill_id = str(randint(0,1000))
+    #finding recipient
+     # Find recipient in database
+    response = requests.get(var._user_URL, json = {'username':_recipient}, headers = {'X-Access-Token': token})
+    if(response.status_code == 404):
+        #User not found
+        print(_recipient+ ' Not Found')
+        return 1
+    
     form = {
-        "bill_name" : _bill_name,
-        "bill_id": bill_id,
-        "bill_sender" : var.username,
-        "bill_owner" : _recipient,
-        "amount" : _amount,
-        "description" : _description 
+        "bill_name"     : _bill_name,
+        "bill_id"       : bill_id,
+        "bill_sender"   : var.username,
+        "bill_owner"    : _recipient,
+        "amount"        : _amount,
+        "description"   : _description 
     }
     form_2 = {
         "bill_id": bill_id,
@@ -122,12 +130,19 @@ def ChangeCredit(credit_url, _username,_amount_, token):
 def TransferMoney(_recipient, _amount_, _description,token):
     credit_url = var._user_URL + '/transfer'
     
-    #Change Recipient Credit
-    ChangeCredit(credit_url, _recipient, (int(_amount_)), token)
-    #Change Sender Credit
-    ChangeCredit(credit_url, var.username, (-1)*(int(_amount_)), token)
+    # Find recipient in database
+    response = requests.get(var._user_URL, json = {'username':_recipient}, headers = {'X-Access-Token': token})
+    if(response.status_code == 404):
+        #User not found
+        print(_recipient+ ' Not Found')
+        return 1
+    else :
+        #Change Recipient Credit
+        ChangeCredit(credit_url, _recipient, (int(_amount_)), token)
+        #Change Sender Credit
+        ChangeCredit(credit_url, var.username, (-1)*(int(_amount_)), token)
+        # print("Transfering Money Rp"+str(_amount_)+" to "+_recipient)
 
-    # print("Transfering Money Rp"+str(_amount_)+" to "+_recipient)
 
 def FillSignin() :
     print('Sign in')
