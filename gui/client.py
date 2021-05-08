@@ -1,9 +1,4 @@
-# localhost = 'http://localhost:'
-# PORT = 8080
-# _signup_URL = localhost+str(PORT)+'/api/auth/signup' 
-# _signin_URL = localhost+str(PORT)+'/api/auth/signin'
-# _bill_URL = localhost+str(PORT)+'/api/bill'
-# _user_URL = localhost+str(PORT)+'/api/user'
+# Client
 
 import requests
 import sys
@@ -36,14 +31,10 @@ def FillSignUp():
 
 def SignUp(form) :
     url = var._signup_URL
-    # Getting Header
-    # response = requests.get(url)
-    # headers = response.headers
-    # print(headers)
-
+    
     # Post form to server
     requests.post(url, json = form)
-    print(form)
+    # print(form)
 
 def Signin(_username, _password) :
     form = {
@@ -54,18 +45,22 @@ def Signin(_username, _password) :
 
     url = var._signin_URL
     response = requests.post(url, json = form)
-    if (response.status_code == 200):
-        status = 0
-    elif (response.status_code == 404): #User not found
+    if (response.status_code == 404): #User not found
         status = 1
     elif (response.status_code == 401) : #Wrong Password
         status = 2
-    #saving var.token session    
-    print("Posting to " + url)
-    buffer = response.json()
-    var.token = buffer['accessToken']
-    print(form)
-    print(var.token)
+    else :
+        status = 0
+        #saving var.token session    
+        print("Posting to " + url)
+        buffer = response.json()
+        var.token = buffer['accessToken']
+        var.username = buffer['username']
+        var.name = buffer['name']
+        var.amount_credit = buffer['amount_credit']
+        # print(form)
+        # print(var.username)
+        # print(buffer)
     return status
 
 def CreateBill(bill_url, _bill_name, _recipient, _amount, _description):
@@ -103,7 +98,6 @@ def UpdateBill(_bill_id) :
 def DeleteBill(_bill_id):
     url = _bill_URL +'/'+ _bill_id
     response = requests.delete(url, headers = token)
-
 
 def GetCredit (credit_url, _username, token) :
     #Get Credit from server
