@@ -14,5 +14,5 @@ module.exports = function(app) {
   });
   app.get("/api/user", [authJwt.verifyToken], controller.findOne);
   app.put("/api/user/transfer", [authJwt.verifyToken, verifyUsername.checkUsernameExist, serviceOTP.verifyOTP], controller.updateAmount); // ceklis
-  app.put("/api/user/bill", [authJwt.verifyToken, verifyUsername.checkUsernameExist], controller.updateBill);
+  app.put("/api/user/bill", [authJwt.verifyToken, verifyUsername.checkUsernameExist, serviceOTP.verifyOTP], controller.updateBill);
 };
