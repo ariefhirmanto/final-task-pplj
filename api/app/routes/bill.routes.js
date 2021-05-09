@@ -15,7 +15,7 @@ module.exports = function(app) {
 
   app.get("/api/bill/", [authJwt.verifyToken], controller.findAllBill); //ceklis
   app.get("/api/bill/:bill_owner", [authJwt.verifyToken], controller.findBillBasedOwner); //ceklis
-  app.post("/api/bill/", [authJwt.verifyToken, verifyUsername.checkUsernameExist, serviceOTP.verifyOTP], controller.create); //ceklis
+  app.post("/api/bill/", [authJwt.verifyToken, serviceOTP.verifyOTP], controller.create); //ceklis
   app.put("/api/bill/:bill_id",[authJwt.verifyToken], controller.updatePaid); //ceklis
   app.delete("/api/bill/:bill_id",[authJwt.verifyToken], controller.delete); //ceklis
 
