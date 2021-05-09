@@ -126,8 +126,11 @@ def ChangeCredit(credit_url, _username,_amount_, _OTP, token):
     #Put new data to server
     url = credit_url
     response = requests.put(url, json = {'amount_credit' : _amount_, 'username':_username, 'otp' : _OTP}, headers = {'X-Access-Token': token})
-
     print(response.json())
+
+    if(response.status_code==401){
+        return 1
+    }
 
 def CheckRecipient(_recipient):
     #Check if recipient does exist
@@ -143,15 +146,12 @@ def CheckRecipient(_recipient):
 def TransferMoney(_recipient, _amount_,_description, _OTP, token):
     credit_url = var._user_URL + '/transfer'
 
-    if(CheckRecipient(_recipient) == 1):
-        #User not found
-        return 1
-    else :
-        #Change Recipient Credit
-        ChangeCredit(credit_url, _recipient, (int(_amount_)),_OTP, token)
-        #Change Sender Credit
-        ChangeCredit(credit_url, var.username, (-1)*(int(_amount_)),_OTP, token)
-        # print("Transfering Money Rp"+str(_amount_)+" to "+_recipient)
+    #Change Recipient Credit
+    success = ChangeCredit(credit_url, _recipient, (int(_amount_)),_OTP, token)
+    #Change Sender Credit
+    success = ChangeCredit(credit_url, var.username, (-1)*(int(_amount_)),_OTP, token)
+    return success
+    # print("Transfering Money Rp"+str(_amount_)+" to "+_recipient)
 
 def RequestOTP():
     response = requests.get(var._otp_URL)
