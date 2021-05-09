@@ -166,6 +166,17 @@ def UpdateInfo():
     #Update User Info
     var.amount_credit = user_form['amount']
     
+def FindBill(_bill_id):
+    found = False
+    for i in range(0,len(var.bill_form)):
+        if (var.bill_form[i]['bill'] == _bill_id) :
+            found = True
+            break
+    
+    return (found,i)
+
+
+
 
 
 def FillSignin() :
