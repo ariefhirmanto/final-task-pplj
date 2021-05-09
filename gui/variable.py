@@ -7,7 +7,7 @@ _signup_URL = localhost+str(PORT)+'/api/auth/signup'
 _signin_URL = localhost+str(PORT)+'/api/auth/signin'
 _bill_URL = localhost+str(PORT)+'/api/bill'
 _user_URL = localhost+str(PORT)+'/api/user'
-
+_otp_URL = localhost+str(PORT)+'/api/processing'
 
 # Variables
 token = " "

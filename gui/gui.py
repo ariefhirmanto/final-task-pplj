@@ -44,7 +44,7 @@ class App:
         # otp
         self.otp1 = otp(master=self.root, app=self)
         self.otp2 = otp(master=self.root, app=self)
-        self.otp3 = otp(master=self.root, app=self)
+        self.otp3 = otp_transfer(master=self.root, app=self)
 
 
     def main_page(self):
@@ -237,16 +237,27 @@ class Page_3:
         self.app.make_otp3()
 
     def transfer_clicked(self):
-        flag = TransferMoney(self.transfer_recipient.get(), self.amount.get(), self.description.get(), var.token)
+        flag = CheckRecipient(self.transfer_recipient.get())
         if(flag==1):
             showinfo(
                 title='Information',
                 message="Transaction Failed, User not Found"
             )
+        else:
+            RequestOTP()
+            self.frame.pack_forget()
+            self.app.make_otp3()
+
+        # flag = TransferMoney(self.transfer_recipient.get(), self.amount.get(), self.description.get(), var.token)
+        # if(flag==1):
+        #     showinfo(
+        #         title='Information',
+        #         message="Transaction Failed, User not Found"
+        #     )
         # Clear Entry
-        ttk.Entry(self.frame, textvariable=self.transfer_recipient).delete(0, 'end')
-        ttk.Entry(self.frame, textvariable=self.amount).delete(0, 'end')
-        ttk.Entry(self.frame, textvariable=self.description).delete(0, 'end')
+        # ttk.Entry(self.frame, textvariable=self.transfer_recipient).delete(0, 'end')
+        # ttk.Entry(self.frame, textvariable=self.amount).delete(0, 'end')
+        # ttk.Entry(self.frame, textvariable=self.description).delete(0, 'end')
 class Login:
     def __init__(self, root=None):
         self.root = root
@@ -340,6 +351,38 @@ class otp:
     def go_back(self):
         self.frame.pack_forget()
         self.app.main_page() 
+
+class otp_transfer:
+    # otp
+    def __init__(self, master=None, app=None):
+        self.master = master
+        self.app = app
+        # otp Frame
+        self.frame = ttk.Frame(self.master)
+
+        # Variabel
+        self.otp= tk.StringVar()
+
+        ttk.Label(self.frame, text="Masukkan OTP:").pack(fill='x', expand=True)
+        ttk.Entry(self.frame, textvariable=self.otp).pack(fill='x', expand=True, pady=5)
+
+        # Ok Button
+        ttk.Button(self.frame, text='Ok', command=self.ok_clicked).pack(fill='x', expand=True, pady=10)
+
+        # Cancel
+        ttk.Button(self.frame, text='Cancel', command=self.go_back).pack(fill='x', expand=True, pady=5)
+
+    def start_page(self):
+        self.frame.pack(padx=10, pady=10, fill='x', expand=True)
+
+    def go_back(self):
+        self.frame.pack_forget()
+        self.app.main_page() 
+
+    def ok_clicked(self):
+        success = TransferMoney(self.app.page_3.transfer_recipient.get(), self.app.page_3.amount.get(), self.app.page_3.description.get(), self.otp.get(), var.token)
+        print(success)
+
 
 class Signup():
     # sign up
