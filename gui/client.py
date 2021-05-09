@@ -64,31 +64,33 @@ def Signin(_username, _password) :
         # print(buffer)
     return status
 
-def CreateBill(_bill_name, _recipient, _amount, _description):
+def CreateBill(_bill_name, _recipient, _amount, _description,  _OTP):
     bill_id = str(randint(0,1000))
-    #finding recipient
-     # Find recipient in database
-    response = requests.get(var._user_URL, json = {'username':_recipient}, headers = {'X-Access-Token': var.token})
-    if(response.status_code == 404):
-        #User not found
-        return 1
-    
     form = {
         "bill_name"     : _bill_name,
         "bill_id"       : bill_id,
         "bill_sender"   : var.username,
         "bill_owner"    : _recipient,
         "amount"        : _amount,
-        "description"   : _description 
+        "description"   : _description, 
+        "otp"           : _OTP
     }
     form_2 = {
         "bill_id": bill_id,
-        "bill_owner" : _recipient,
+        "username" : _recipient,
+        "otp"           : _OTP
     }
     #Post to server
     response = requests.post(var._bill_URL, json=form, headers = {'X-Access-Token': var.token})
     print('Creating bill to ' + var._bill_URL)
     response = requests.put(var._user_URL+'/bill', json=form_2, headers = {'X-Access-Token': var.token})
+
+    if (response.status_code == 401):
+        success = 1
+    else:
+        success = 0
+
+    return success
 
 def GetBill(_username, _bill_id) :
     if(_bill_id == ''):
@@ -158,7 +160,7 @@ def UpdateInfo():
     message = {
         'username' : var.username
     }
-    response = requests.get(url,json = message, var.token)
+    response = requests.get(url,json = message, headers = {'X-Access-Token': var.token})
 
     user_form = response.json()
     #Update User Info
