@@ -157,6 +157,18 @@ def RequestOTP():
     response = requests.get(var._otp_URL)
     print(response.json())
 
+def UpdateInfo():
+    url = var._user_URL
+    message = {
+        'username' : var.username
+    }
+    response = requests.get(url,json = message, var.token)
+
+    user_form = response.json()
+    #Update User Info
+    var.amount_credit = user_form['amount']
+    
+
 
 def FillSignin() :
     print('Sign in')
