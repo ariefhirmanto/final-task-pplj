@@ -68,12 +68,8 @@ def CreateBill(_bill_name, _recipient, _amount, _description):
     bill_id = str(randint(0,1000))
     #finding recipient
      # Find recipient in database
-<<<<<<< Updated upstream
-    if(CheckRecipient(_recipient) == 1):
-=======
     response = requests.get(var._user_URL, json = {'username':_recipient}, headers = {'X-Access-Token': var.token})
     if(response.status_code == 404):
->>>>>>> Stashed changes
         #User not found
         return 1
     
@@ -128,14 +124,14 @@ def ChangeCredit(credit_url, _username,_amount_, _OTP, token):
     response = requests.put(url, json = {'amount_credit' : _amount_, 'username':_username, 'otp' : _OTP}, headers = {'X-Access-Token': token})
     print(response.json())
 
-    if(response.status_code==401){
+    if(response.status_code==401):
         return 1
-    }
+
 
 def CheckRecipient(_recipient):
     #Check if recipient does exist
     # Find recipient in database
-    response = requests.get(var._user_URL, json = {'username':_recipient}, headers = {'X-Access-Token': token})
+    response = requests.get(var._user_URL, json = {'username':_recipient}, headers = {'X-Access-Token': var.token})
     if(response.status_code == 404):
         #User not found
         print(_recipient+ ' Not Found')
@@ -154,7 +150,7 @@ def TransferMoney(_recipient, _amount_,_description, _OTP, token):
     # print("Transfering Money Rp"+str(_amount_)+" to "+_recipient)
 
 def RequestOTP():
-    response = requests.get(var._otp_URL)
+    response = requests.get(var._otp_URL, headers = {'X-Access-Token': var.token})
     print(response.json())
 
 def UpdateInfo():
