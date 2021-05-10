@@ -1,0 +1,18 @@
+[Petunjuk penggunaan]
+
+General :
+- Install MongoDB pada environment Anda, pastikan environment tsb sama dengan environment yang nanti akan digunakan untuk Client dan Backend.
+- Untuk mempermudah pengaksesan database, install MongoDB Compass. Pada MongoDB Compass, paste connection "localhost:27017"
+- Buat database bernama mata_duitan pada MongoDB
+
+Client :
+- install request module
+- IP Address menggunakan localhost. Apabila menggunakan API Address yang lain, perlu mengganti isi dari variable localhost yang terdapat pada file variable.py, Begitu juga untuk PORT yang digunakan
+
+Backend :
+- Masuk ke direktori “api” dengan terminal
+- Pada terminal, jalankan command “npm install”. Command tersebut akan menginstall seluruh dependency backend
+- Setelah selesai, jalankan backend dengan command “node server.js”
+- Apabila ditemui backend crash karena “express not found”, silahkan install express terlebih dahulu dengan command “npm install express”
+- Jalankan kembali backend
+* Note: Backend berjalan di port 8080, pastikan port tersebut kosong
