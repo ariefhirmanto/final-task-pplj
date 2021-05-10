@@ -120,10 +120,10 @@ def GetCredit (credit_url, _username, token) :
     credit = response.json()
     return(credit['amount_credit'])
 
-def ChangeCredit(credit_url, _username,_amount_, _OTP, token):
+def ChangeCredit(credit_url, _username,_amount_, _OTP, token, _category):
     #Put new data to server
     url = credit_url
-    response = requests.put(url, json = {'amount_credit' : _amount_, 'username':_username, 'otp' : _OTP}, headers = {'X-Access-Token': token})
+    response = requests.put(url, json = {'amount_credit' : _amount_, 'username':_username, 'otp' : _OTP, 'category':_category}, headers = {'X-Access-Token': token})
     print(response.json())
 
     if(response.status_code==401):
@@ -142,13 +142,13 @@ def CheckRecipient(_recipient):
     else :
         return 0
 
-def TransferMoney(_recipient, _amount_,_description, _OTP, token):
+def TransferMoney(_recipient, _amount_,_description, _OTP, token, _category):
     credit_url = var._user_URL + '/transfer'
     success = 0
     #Change Recipient Credit
-    success = ChangeCredit(credit_url, _recipient, (int(_amount_)),_OTP, token)
+    success = ChangeCredit(credit_url, _recipient, (int(_amount_)),_OTP, token, _category)
     #Change Sender Credit
-    success = ChangeCredit(credit_url, var.username, (-1)*(int(_amount_)),_OTP, token)
+    success = ChangeCredit(credit_url, var.username, (-1)*(int(_amount_)),_OTP, token, _category)
     return success
     # print("Transfering Money Rp"+str(_amount_)+" to "+_recipient)
 

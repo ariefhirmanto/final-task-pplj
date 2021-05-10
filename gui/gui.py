@@ -5,7 +5,13 @@ import json
 import variable as var
 from client import *
 from PIL import Image, ImageTk
+from pymongo import MongoClient 
+from datetime import datetime
 
+
+# saving data history
+client = MongoClient('mongodb://localhost:27017/')
+db = client.mata_duitan_clients
 
 
 class App:
@@ -425,7 +431,7 @@ class otp_pay_bill:
         _recipient = var.bill_form[self.app.page_1.i]['bill_sender']
         _amount = var.bill_form[self.app.page_1.i]['amount']
         _description = var.bill_form[self.app.page_1.i]['description']
-        success = TransferMoney(_recipient, _amount, _description, self.otp.get(), var.token)
+        success = TransferMoney(_recipient, _amount, _description, self.otp.get(), var.token, "pay bill")
         print(success)
         if(success==0):
             showinfo(
@@ -433,6 +439,22 @@ class otp_pay_bill:
                 message="Transaction is successful"
             )
             DeleteBill(self.app.page_1.bill_id.get(), self.otp.get())
+            
+            # save log
+            data_log = {"time" : datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+                        "category" : "pay bill",
+                        "details" :  {
+                            "bill id" : self.app.page_1.bill_id.get(),
+                            "recipient" : _recipient,
+                            "amount" : _amount,
+                            "description": _description
+                        }
+            }
+            print(data_log)
+            col_name = "log_" + var.username
+            db[col_name].insert_one(data_log)
+            
+            
             # Clear Entry
             ttk.Entry(self.frame, textvariable=self.app.page_1.bill_id).delete(0,'end')
             # clear otp entry
@@ -440,6 +462,9 @@ class otp_pay_bill:
             # back to main menu
             self.frame.pack_forget()
             self.app.main_page() 
+            
+            
+
         else:
             print("transaction error")
             showinfo(
@@ -491,6 +516,21 @@ class otp_create_bill:
                 title='Information',
                 message="Transaction is successful"
             )
+
+            # save log
+            data_log = {"time" : datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+                        "category" : "create bill",
+                        "details" :  {
+                            "bill name" : self.app.page_2.bill_name.get(),
+                            "recipient" : self.app.page_2.bill_recipient.get(),
+                            "amount" : self.app.page_2.amount.get(),
+                            "description": self.app.page_2.description.get()
+                        }
+            }
+            print(data_log)
+            col_name = "log_" + var.username
+            db[col_name].insert_one(data_log)
+
             # Clear Entry
             ttk.Entry(self.frame, textvariable=self.app.page_2.bill_name).delete(0,'end')
             ttk.Entry(self.frame, textvariable=self.app.page_2.bill_recipient).delete(0,'end')
@@ -543,13 +583,28 @@ class otp_transfer:
          
 
     def ok_clicked(self):
-        success = TransferMoney(self.app.page_3.transfer_recipient.get(), self.app.page_3.amount.get(), self.app.page_3.description.get(), self.otp.get(), var.token)
+        success = TransferMoney(self.app.page_3.transfer_recipient.get(), self.app.page_3.amount.get(), self.app.page_3.description.get(), self.otp.get(), var.token, "transfer")
         print(success)
         if(success==0):
             showinfo(
                 title='Information',
                 message="Transaction is successful"
             )
+            
+
+            # save log
+            data_log = {"time" : datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+                        "category" : "transfer money",
+                        "details" :  {
+                            "recipient" : self.app.page_3.transfer_recipient.get(),
+                            "amount" : self.app.page_3.amount.get(),
+                            "description": self.app.page_3.description.get()
+                        }
+            }
+            print(data_log)
+            col_name = "log_" + var.username
+            db[col_name].insert_one(data_log)
+
             # Clear Entry
             ttk.Entry(self.frame, textvariable=self.app.page_3.transfer_recipient).delete(0, 'end')
             ttk.Entry(self.frame, textvariable=self.app.page_3.amount).delete(0, 'end')
@@ -559,6 +614,7 @@ class otp_transfer:
             # back to main menu
             self.frame.pack_forget()
             self.app.main_page() 
+
         else:
             showinfo(
                 title='Information',
