@@ -16,6 +16,11 @@ class App:
         self.frame = tk.Frame(self.root)
         self.frame.pack(padx=10, pady=10, fill='x', expand=True)
 
+        # Pay Bill button
+        ttk.Button(self.frame, text='Refresh',
+                  command=self.refresh).pack(fill='x', expand=True, pady=10)
+        self.page_1 = Page_1(master=self.root, app=self)
+
         ttk.Label(self.frame, text='-----------------------------------').pack(fill='x', expand=True)
         ttk.Label(self.frame, text='Username \t'+var.username).pack(fill='x', expand=True)
         ttk.Label(self.frame, text='Name \t\t'+var.name).pack(fill='x', expand=True)
@@ -42,7 +47,7 @@ class App:
                   command=self.logout).pack(fill='x', expand=True, pady=30)
 
         # otp
-        self.otp1 = otp_pay_bill()(master=self.root, app=self)
+        self.otp1 = otp_pay_bill(master=self.root, app=self)
         self.otp2 = otp_create_bill(master=self.root, app=self)
         self.otp3 = otp_transfer(master=self.root, app=self)
 
@@ -50,13 +55,24 @@ class App:
     def main_page(self):
         self.frame.pack(padx=10, pady=10, fill='x', expand=True)
 
+    def refresh(self):
+        print("refresh")
+        UpdateInfo()
+        self.frame.pack_forget()
+        refresh = Refresh(root)
+        
+
     def make_page_1(self):
+        self.page_1 = Page_1(master=self.root, app=self)
         self.frame.pack_forget()
         self.page_1.start_page()
 
-        GetBill(var.username,'')
 
+        GetBill(var.username,'')
+        
         for i in range(0, len(var.bill_form)):
+            print(var.bill_form[i])
+            print('\n')
             var.bill_name = var.bill_form[i]['bill_name']
             var.bill_id = var.bill_form[i]['bill_id']
             var.bill_sender = var.bill_form[i]['bill_sender']
@@ -71,7 +87,7 @@ class App:
             ttk.Label(self.page_1.frame, text='Bill: ' + var.bill_name + ', ID: '+var.bill_id + ', Sender: ' + var.bill_sender).pack(fill='x', expand=True)
             ttk.Label(self.page_1.frame, text=' Amount: '+ str(var.bill_amount) + ', Description: ' + var.bill_description).pack(fill='x', expand=True)
             ttk.Label(self.page_1.frame, text='---------------------------------------------------').pack(fill='x', expand=True)
-    
+        
 
     def make_page_2(self):
         self.frame.pack_forget()
@@ -97,7 +113,6 @@ class App:
         self.frame.pack_forget()
         login=Login(root)
 
-
 class Page_1:
     # Pay Bill
     def __init__(self, master=None, app=None):
@@ -106,9 +121,7 @@ class Page_1:
         # Pay Bill frame
         self.frame = ttk.Frame(self.master)
         # Pay Bill
-        ttk.Label(self.frame, text='Bill List', font=("Arial", 20)).pack(fill='x', expand=True)
-
-        ttk.Label(self.frame, text='---------------------------------------------------').pack(fill='x', expand=True)
+        ttk.Label(self.frame, text='Pay Bill', font=("Arial", 20)).pack(fill='x', expand=True)
 
         self.bill_id = tk.StringVar()
 
@@ -119,8 +132,10 @@ class Page_1:
         ttk.Button(self.frame, text='Pay', command=self.pay_bill).pack(fill='x', expand=True)
 
         ttk.Button(self.frame, text='Back to Main Menu', command=self.go_back).pack(fill='x', expand=True, pady=30)
-
         
+        ttk.Label(self.frame, text='Bill List', font=("Arial", 20)).pack(fill='x', expand=True)
+
+        ttk.Label(self.frame, text='---------------------------------------------------').pack(fill='x', expand=True)        
 
     def start_page(self):
         self.frame.pack(padx=10, pady=10, fill='x', expand=True)
@@ -130,9 +145,18 @@ class Page_1:
         self.app.main_page()
 
     def pay_bill(self):
-        self.frame.pack_forget()
-        self.app.make_otp1()
-        
+        (self.found, self.i) = FindBill(self.bill_id.get())
+        if(self.found):
+            RequestOTP()
+            self.frame.pack_forget()
+            self.app.make_otp1()
+        else:
+            print("error")
+            showinfo(
+                title='Information',
+                message="Transaction is faile, ID Bill is not found"
+            )
+    
 class Page_2:
     # Create Bill
     def __init__(self, master=None, app=None):
@@ -183,7 +207,7 @@ class Page_2:
         if(flag==1):
             showinfo(
                 title='Information',
-                message="Transaction Failed, User not Found"
+                message="Transaction is Failed, Recipient is not Found"
             )
         else:
             RequestOTP()
@@ -251,7 +275,7 @@ class Page_3:
         if(flag==1):
             showinfo(
                 title='Information',
-                message="Transaction Failed, User not Found"
+                message="Transaction is failed, Recipient is not Found"
             )
         else:
             RequestOTP()
@@ -362,36 +386,6 @@ class otp:
         self.frame.pack_forget()
         self.app.main_page() 
 
-class otp_create_bill:
-    # otp
-    def __init__(self, master=None, app=None):
-        self.master = master
-        self.app = app
-        # otp Frame
-        self.frame = ttk.Frame(self.master)
-
-        # Variabel
-        self.otp= tk.StringVar()
-
-        ttk.Label(self.frame, text="Masukkan OTP:").pack(fill='x', expand=True)
-        ttk.Entry(self.frame, textvariable=self.otp).pack(fill='x', expand=True, pady=5)
-
-        # Ok Button
-        ttk.Button(self.frame, text='Ok', command=self.ok_clicked).pack(fill='x', expand=True, pady=10)
-
-        # Cancel
-        ttk.Button(self.frame, text='Cancel', command=self.go_back).pack(fill='x', expand=True, pady=5)
-
-    def start_page(self):
-        self.frame.pack(padx=10, pady=10, fill='x', expand=True)
-
-    def go_back(self):
-        self.frame.pack_forget()
-        self.app.main_page() 
-
-    def ok_clicked(self):
-        success = CreateBill(self.app.page_2.bill_name.get(), self.app.page_2.bill_recipient.get(), self.app.page_2.amount.get(), self.app.page_2.description.get(),  self.otp.get())
-        print(success)
 
 class otp_pay_bill:
     # otp
@@ -417,12 +411,101 @@ class otp_pay_bill:
         self.frame.pack(padx=10, pady=10, fill='x', expand=True)
 
     def go_back(self):
+        # Clear Entry
+        ttk.Entry(self.frame, textvariable=self.app.page_1.bill_id).delete(0,'end')
+        # clear otp entry
+        ttk.Entry(self.frame, textvariable=self.otp).delete(0, 'end')
+        # back to main menu
+        self.frame.pack_forget()
+        self.app.main_page() 
+        
+
+    def ok_clicked(self):
+        # success = CreateBill(self.app.page_2.bill_name.get(), self.app.page_2.bill_recipient.get(), self.app.page_2.amount.get(), self.app.page_2.description.get(),  self.otp.get())
+        _recipient = var.bill_form[self.app.page_1.i]['bill_sender']
+        _amount = var.bill_form[self.app.page_1.i]['amount']
+        _description = var.bill_form[self.app.page_1.i]['description']
+        success = TransferMoney(_recipient, _amount, _description, self.otp.get(), var.token)
+        print(success)
+        if(success==0):
+            showinfo(
+                title='Information',
+                message="Transaction is successful"
+            )
+            DeleteBill(self.app.page_1.bill_id.get(), self.otp.get())
+            # Clear Entry
+            ttk.Entry(self.frame, textvariable=self.app.page_1.bill_id).delete(0,'end')
+            # clear otp entry
+            ttk.Entry(self.frame, textvariable=self.otp).delete(0, 'end')
+            # back to main menu
+            self.frame.pack_forget()
+            self.app.main_page() 
+        else:
+            print("transaction error")
+            showinfo(
+                title='Information',
+                message="Transaction is failed, OTP is wrong"
+            )
+
+class otp_create_bill:
+    # otp
+    def __init__(self, master=None, app=None):
+        self.master = master
+        self.app = app
+        # otp Frame
+        self.frame = ttk.Frame(self.master)
+
+        # Variabel
+        self.otp= tk.StringVar()
+
+        ttk.Label(self.frame, text="Masukkan OTP:").pack(fill='x', expand=True)
+        ttk.Entry(self.frame, textvariable=self.otp).pack(fill='x', expand=True, pady=5)
+
+        # Ok Button
+        ttk.Button(self.frame, text='Ok', command=self.ok_clicked).pack(fill='x', expand=True, pady=10)
+
+        # Cancel
+        ttk.Button(self.frame, text='Cancel', command=self.go_back).pack(fill='x', expand=True, pady=5)
+
+    def start_page(self):
+        self.frame.pack(padx=10, pady=10, fill='x', expand=True)
+
+    def go_back(self):
+        # Clear Entry
+        ttk.Entry(self.frame, textvariable=self.app.page_2.bill_name).delete(0,'end')
+        ttk.Entry(self.frame, textvariable=self.app.page_2.bill_recipient).delete(0,'end')
+        ttk.Entry(self.frame, textvariable=self.app.page_2.amount).delete(0,'end')
+        ttk.Entry(self.frame, textvariable=self.app.page_2.description).delete(0,'end')
+        # clear otp entry
+        ttk.Entry(self.frame, textvariable=self.otp).delete(0, 'end')
+        # back to main menu
         self.frame.pack_forget()
         self.app.main_page() 
 
     def ok_clicked(self):
         success = CreateBill(self.app.page_2.bill_name.get(), self.app.page_2.bill_recipient.get(), self.app.page_2.amount.get(), self.app.page_2.description.get(),  self.otp.get())
         print(success)
+        
+        if(success==0):
+            showinfo(
+                title='Information',
+                message="Transaction is successful"
+            )
+            # Clear Entry
+            ttk.Entry(self.frame, textvariable=self.app.page_2.bill_name).delete(0,'end')
+            ttk.Entry(self.frame, textvariable=self.app.page_2.bill_recipient).delete(0,'end')
+            ttk.Entry(self.frame, textvariable=self.app.page_2.amount).delete(0,'end')
+            ttk.Entry(self.frame, textvariable=self.app.page_2.description).delete(0,'end')
+            # clear otp entry
+            ttk.Entry(self.frame, textvariable=self.otp).delete(0, 'end')
+            # back to main menu
+            self.frame.pack_forget()
+            self.app.main_page() 
+        else:
+            showinfo(
+                title='Information',
+                message="Transaction is failed, OTP is wrong"
+            )
 
 class otp_transfer:
     # otp
@@ -448,12 +531,39 @@ class otp_transfer:
         self.frame.pack(padx=10, pady=10, fill='x', expand=True)
 
     def go_back(self):
+        # Clear Entry
+        ttk.Entry(self.frame, textvariable=self.app.page_3.transfer_recipient).delete(0, 'end')
+        ttk.Entry(self.frame, textvariable=self.app.page_3.amount).delete(0, 'end')
+        ttk.Entry(self.frame, textvariable=self.app.page_3.description).delete(0, 'end')
+        # clear otp entry
+        ttk.Entry(self.frame, textvariable=self.otp).delete(0, 'end')
+        # back to min menu
         self.frame.pack_forget()
-        self.app.main_page() 
+        self.app.main_page()
+         
 
     def ok_clicked(self):
         success = TransferMoney(self.app.page_3.transfer_recipient.get(), self.app.page_3.amount.get(), self.app.page_3.description.get(), self.otp.get(), var.token)
         print(success)
+        if(success==0):
+            showinfo(
+                title='Information',
+                message="Transaction is successful"
+            )
+            # Clear Entry
+            ttk.Entry(self.frame, textvariable=self.app.page_3.transfer_recipient).delete(0, 'end')
+            ttk.Entry(self.frame, textvariable=self.app.page_3.amount).delete(0, 'end')
+            ttk.Entry(self.frame, textvariable=self.app.page_3.description).delete(0, 'end')
+            # clear otp entry
+            ttk.Entry(self.frame, textvariable=self.otp).delete(0, 'end')
+            # back to main menu
+            self.frame.pack_forget()
+            self.app.main_page() 
+        else:
+            showinfo(
+                title='Information',
+                message="Transaction is failed, OTP is wrong"
+            )
 
 class Signup():
     # sign up
@@ -510,6 +620,10 @@ class Signup():
             tk.Entry(self.frame, textvariable=self.username).delete(0, 'end')
             ttk.Entry(self.frame, textvariable=self.password, show="*").delete(0, 'end')
             ttk.Entry(self.frame, textvariable=self.repeat_password, show="*").delete(0, 'end')
+            showinfo(
+                title='Information',
+                message="Registration is successful"
+            )   
         else:
             showinfo(
                 title='Information',
@@ -519,8 +633,11 @@ class Signup():
     def back_login_clicked(self):
         self.frame.pack_forget()
         login=Login(root)
-        
-    
+
+class Refresh(): 
+    def __init__(self, root=None):
+        self.root = root
+        app = App(root)
 
 if __name__ == '__main__':
     root = tk.Tk()

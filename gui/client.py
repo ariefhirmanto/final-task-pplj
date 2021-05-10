@@ -61,7 +61,7 @@ def Signin(_username, _password) :
         var.amount_credit = buffer['amount_credit']
         print(var.token )
         # print(var.username)
-        # print(buffer)
+        print(buffer)
     return status
 
 def CreateBill(_bill_name, _recipient, _amount, _description,  _OTP):
@@ -108,9 +108,9 @@ def UpdateBill(_bill_id) :
     url = _bill_URL +'/'+ _bill_id
     response = requests.put(url, headers = {'X-Access-Token': var.token})
 
-def DeleteBill(_bill_id):
-    url = _bill_URL +'/'+ _bill_id
-    response = requests.delete(url, headers = {'X-Access-Token': var.token})
+def DeleteBill(_bill_id, _OTP):
+    url = var._bill_URL +'/'+ _bill_id
+    response = requests.delete(url, json={"otp":_OTP}, headers = {'X-Access-Token': var.token})
 
 def GetCredit (credit_url, _username, token) :
     #Get Credit from server
@@ -128,7 +128,8 @@ def ChangeCredit(credit_url, _username,_amount_, _OTP, token):
 
     if(response.status_code==401):
         return 1
-
+    else:
+        return 0
 
 def CheckRecipient(_recipient):
     #Check if recipient does exist
@@ -143,7 +144,7 @@ def CheckRecipient(_recipient):
 
 def TransferMoney(_recipient, _amount_,_description, _OTP, token):
     credit_url = var._user_URL + '/transfer'
-
+    success = 0
     #Change Recipient Credit
     success = ChangeCredit(credit_url, _recipient, (int(_amount_)),_OTP, token)
     #Change Sender Credit
@@ -164,12 +165,13 @@ def UpdateInfo():
 
     user_form = response.json()
     #Update User Info
-    var.amount_credit = user_form['amount']
+    var.amount_credit = user_form[0]['amount_credit']
+    print(user_form)
     
 def FindBill(_bill_id):
     found = False
     for i in range(0,len(var.bill_form)):
-        if (var.bill_form[i]['bill'] == _bill_id) :
+        if (var.bill_form[i]['bill_id'] == _bill_id) :
             found = True
             break
     
