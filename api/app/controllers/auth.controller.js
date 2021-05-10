@@ -12,7 +12,7 @@ exports.signup = (req, res) => {
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 8),
     name: req.body.name,
-    amount_credit: req.body.credit,
+    amount_credit: 100000,
     bill_ID: req.body.bill_ID,
     contact: req.body.contact
   });
