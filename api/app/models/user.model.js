@@ -18,7 +18,8 @@ const User = mongoose.model(
     amount_credit: Number,
     bill_id: [String],
     contact: String
-  })
+  },
+  { timestamps: true })
   ,collectionName
 );
 

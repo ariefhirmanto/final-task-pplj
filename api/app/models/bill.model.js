@@ -11,7 +11,8 @@ const Bill = mongoose.model(
     amount: Number,
     description: String,
     isPaid: Boolean
-  })
+  },
+  { timestamps: true })
   ,collectionName
 );
 

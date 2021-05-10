@@ -1,6 +1,5 @@
 const db = require("../models");
 const Bill = db.bill;
-const User = db.user;
 
 exports.findAllBill = (req, res) => {
   Bill.find()
@@ -120,7 +119,7 @@ exports.updatePaid = (req, res) => {
 // Delete a Bill with the specified id in the request
 exports.delete = (req, res) => {
   const id = req.params.bill_id;
-  Bill.findOneAndRemove({ bill_id:id })
+  Bill.findOneAndRemove({ bill_id:id }, { useFindAndModify: false })
     .then(data => {
       if (!data) {
         res.status(404).send({

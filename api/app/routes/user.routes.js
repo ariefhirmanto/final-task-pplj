@@ -15,4 +15,5 @@ module.exports = function(app) {
   app.get("/api/user", [authJwt.verifyToken], controller.findOne);
   app.put("/api/user/transfer", [authJwt.verifyToken, verifyUsername.checkUsernameExist, serviceOTP.verifyOTP], controller.updateAmount); // ceklis
   app.put("/api/user/bill", [authJwt.verifyToken, verifyUsername.checkUsernameExist, serviceOTP.verifyOTP], controller.updateBill);
+  app.get("/api/user/transfer/:username", [authJwt.verifyToken], controller.findTransferHistOwner); //ceklis
 };
